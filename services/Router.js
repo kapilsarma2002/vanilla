@@ -9,9 +9,15 @@ const Router = {
       })
     })
 
+    // Event Handler for URL changes
+    window.addEventListener("popstate", event => {
+      Router.go(event.state.route, false);
+    })
+
     // check the initial url
     Router.go(location.pathname)
   },
+
   go: (route, addToHistory=true) => {
     console.log(`Going to ${route}`);
 
@@ -23,13 +29,20 @@ const Router = {
 
     switch (route) {
       case "/":
-        pageElement = document.createElement("h1");
-        pageElement.textContent = "Home Page"; 
+        pageElement = document.createElement("menu-page");
+        pageElement.textContent = "Menu"; 
         break;
       case "/order":
-        pageElement = document.createElement("h1");
-        pageElement.textContent = "Orders Page"; 
+        pageElement = document.createElement("orders-page");
+        pageElement.textContent = "My Orders"; 
         break;
+      default:
+        if (route.startsWith("/product-")) {
+          pageElement = document.createElement("details-page");
+          pageElement.textContent = "Details";
+          const paramId = route.substring(route.lastIndexOf("-")+1);
+          pageElement.dataset.id = paramId;
+        }
     }
     if (pageElement) {
       const cache = document.querySelector("main");
